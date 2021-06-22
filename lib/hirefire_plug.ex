@@ -59,6 +59,8 @@ defmodule HirefirePlug do
     end
   end
 
+  def call(conn, _options), do: conn
+
   defp json(conn, data) do
     conn
     |> put_resp_content_type("application/json")

@@ -90,5 +90,16 @@ defmodule HirefirePlugTest do
 
       assert conn.halted == false
     end
+
+    test "pass through if the path does not match" do
+      conn =
+        conn(:get, "/wrong/path")
+        |> HirefirePlug.call(
+          token: "hirefire-token",
+          worker_jobs: %{queue: fn -> 24 end, worker: fn -> 42 end}
+        )
+
+      assert conn.halted == false
+    end
   end
 end

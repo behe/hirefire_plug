@@ -4,7 +4,7 @@ defmodule HirefirePlug do
   def init(options) do
     options =
       with {:ok, token_fun} when is_function(token_fun, 0) <- Keyword.fetch(options, :token) do
-        Keyword.put(options, :token, token_fun.())
+        options
       else
         :error ->
           raise """
@@ -44,10 +44,10 @@ defmodule HirefirePlug do
   end
 
   def call(conn = %{path_info: ["hirefire", path_token, "info"]}, options) do
-    hirefire_token = Keyword.fetch!(options, :token)
+    token_fun = Keyword.fetch!(options, :token)
     worker_jobs = Keyword.fetch!(options, :worker_jobs)
 
-    if path_token == hirefire_token do
+    if path_token == token_fun.() do
       job_queues =
         Enum.map(worker_jobs, fn {name, quantity_fun} ->
           %{"name" => name, "quantity" => quantity_fun.()}

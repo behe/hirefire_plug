@@ -4,10 +4,11 @@ defmodule HirefirePlugTest do
 
   describe "init" do
     test "init token from token function" do
+      token_fun = fn -> "hirefire-token" end
       worker_jobs = %{queue: fn -> 24 end, worker: fn -> 42 end}
 
-      assert HirefirePlug.init(token: fn -> "hirefire-token" end, worker_jobs: worker_jobs) == [
-               token: "hirefire-token",
+      assert HirefirePlug.init(token: token_fun, worker_jobs: worker_jobs) == [
+               token: token_fun,
                worker_jobs: worker_jobs
              ]
     end
@@ -67,7 +68,7 @@ defmodule HirefirePlugTest do
       conn =
         conn(:get, "/hirefire/hirefire-token/info")
         |> HirefirePlug.call(
-          token: "hirefire-token",
+          token: fn -> "hirefire-token" end,
           worker_jobs: %{queue: fn -> 24 end, worker: fn -> 42 end}
         )
 
@@ -84,7 +85,7 @@ defmodule HirefirePlugTest do
       conn =
         conn(:get, "/hirefire/wrong-token/info")
         |> HirefirePlug.call(
-          token: "hirefire-token",
+          token: fn -> "hirefire-token" end,
           worker_jobs: %{queue: fn -> 24 end, worker: fn -> 42 end}
         )
 
@@ -95,7 +96,7 @@ defmodule HirefirePlugTest do
       conn =
         conn(:get, "/wrong/path")
         |> HirefirePlug.call(
-          token: "hirefire-token",
+          token: fn -> "hirefire-token" end,
           worker_jobs: %{queue: fn -> 24 end, worker: fn -> 42 end}
         )
 
